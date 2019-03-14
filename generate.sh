@@ -1,1 +1,1 @@
-protoc feature/featurepb/feature.proto --go_out=plugins=grpc:.
+protoc event/eventpb/event.proto --go_out=plugins=grpc:.

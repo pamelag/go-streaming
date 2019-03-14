@@ -1,26 +1,14 @@
-package handler
+package stream
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
-	"log"
 	"os"
 	"sync"
 )
 
-const (
-	fileFormat    = "%020d%s"
-	logSuffix     = ".log"
-	cleanedSuffix = ".cleaned"
-	indexSuffix   = ".index"
-)
-
-/*
-	Segment The segment struct to store the buffer
-*/
+//Segment stores the buffer
 type Segment struct {
 	log  *os.File
 	name string
@@ -28,9 +16,7 @@ type Segment struct {
 	lock sync.Mutex
 }
 
-/*
-	Segment The segment struct to store the buffer
-*/
+// Marshal the segment
 var Marshal = func(v interface{}) (io.Reader, error) {
 	b, err := json.MarshalIndent(v, "", "\t")
 	if err != nil {
@@ -39,16 +25,12 @@ var Marshal = func(v interface{}) (io.Reader, error) {
 	return bytes.NewReader(b), nil
 }
 
-/*
-	Unmarshal the segment
-*/
+//Unmarshal the segment
 var Unmarshal = func(r io.Reader, v interface{}) error {
 	return json.NewDecoder(r).Decode(v)
 }
 
-/*
-	NewSegment
-*/
+//NewSegment creates a new segment
 func NewSegment(name string, path string, args ...Message) *Segment {
 	s := &Segment{
 		name: name,
@@ -57,9 +39,7 @@ func NewSegment(name string, path string, args ...Message) *Segment {
 	return s
 }
 
-/*
-	CommitToFile
-*/
+//CommitToFile stores the messages to file
 func (sg *Segment) CommitToFile(messages []Message) error {
 	sg.lock.Lock()
 	defer sg.lock.Unlock()
@@ -83,7 +63,7 @@ func (sg *Segment) CommitToFile(messages []Message) error {
    Use os.IsNotExist() to see if the returned error is due
    to the file being missing.
 */
-func (sg *Segment) Load(path string) error {
+/* func (sg *Segment) Load(path string) error {
 
 	file, err := os.Open("/path/to/file.txt")
 	if err != nil {
@@ -100,4 +80,6 @@ func (sg *Segment) Load(path string) error {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-}
+
+	return err
+} */
