@@ -138,6 +138,7 @@ func GetStream(p *Partition) (*Stream, error) {
 	}
 }
 
+// CloseActiveSteam closes stream access by changing the status
 func CloseActiveSteam(streams []*Stream) error {
 	if streams == nil {
 		return errors.New("no streams argument")
@@ -151,10 +152,10 @@ func CloseActiveSteam(streams []*Stream) error {
 	return nil
 }
 
-//Write
+//Write puts the events into buffer
 func Write(stream *Stream, m Message, activeBuffState chan int) {
 	stream.Messages = append(stream.Messages, m)
-	if len(stream.Messages) < 5 {
+	if len(stream.Messages) < 500 {
 		stream.Status = ACTIVE
 		activeBuffState <- ACTIVE
 		return
