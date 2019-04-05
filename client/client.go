@@ -10,17 +10,23 @@ import (
 	"google.golang.org/grpc"
 )
 
+const (
+	target    string = "localhost:50051"
+	wireframe string = "Wireframe"
+)
+
 func main() {
-	cc, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	cc, err := grpc.Dial(target, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect %v", err)
 	}
 	defer cc.Close()
 	c := eventpb.NewEventServiceClient(cc)
 	createWireframe(c)
-	doClientStreaming(c, "Wireframe")
+	doClientStreaming(c, wireframe)
 }
 
+// createWireframe unary gRPC call for creating a wireframe
 func createWireframe(c eventpb.EventServiceClient) {
 	req := &eventpb.CreateEventRequest{
 		CreateEvent: &eventpb.CreateEvent{
@@ -38,6 +44,7 @@ func createWireframe(c eventpb.EventServiceClient) {
 	fmt.Println()
 }
 
+// doClientStreaming stream gRPC call for sending wireframe stream request
 func doClientStreaming(c eventpb.EventServiceClient, topicName string) {
 	requests := []*eventpb.EditEventRequest{
 		&eventpb.EditEventRequest{
